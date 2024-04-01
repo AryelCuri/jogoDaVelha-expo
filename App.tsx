@@ -4,23 +4,23 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
 export default function App() {
   // Estado para armazenar o estado atual do tabuleiro
-  const [tabuleiro, setTabuleiro] = useState(Array(9).fill(null));
+  const [tabuleiro, setTabuleiro] = useState(Array(9).fill(null))
   // Estado para controlar de quem é a vez: X ou O
-  const [vezDoX, setVezDoX] = useState(true);
+  const [vezDoX, setVezDoX] = useState(true)
   // Estado para armazenar o vencedor do jogo
-  const [vencedor, setVencedor] = useState<string | null>(null);
+  const [vencedor, setVencedor] = useState<string | null>(null)
 
   // Função para lidar com o clique em um quadrado do tabuleiro
   const handleClique = (index: number) => {
-    const novoTabuleiro = [...tabuleiro];
+    const novoTabuleiro = [...tabuleiro]
     // Verificar se já há um vencedor ou se o quadrado já foi preenchido
-    if (vencedor || novoTabuleiro[index]) return;
+    if (vencedor || novoTabuleiro[index]) return
     // Atualizar o estado do tabuleiro com a nova jogada
-    novoTabuleiro[index] = vezDoX ? "X" : "O";
-    setTabuleiro(novoTabuleiro);
+    novoTabuleiro[index] = vezDoX ? "X" : "O"
+    setTabuleiro(novoTabuleiro)
     // Alternar a vez do jogador
-    setVezDoX(!vezDoX);
-  };
+    setVezDoX(!vezDoX)
+  }
 
   // Função para renderizar um quadrado do tabuleiro
   const renderizarQuadrado = (index: number) => {
@@ -33,34 +33,34 @@ export default function App() {
         <Text style={styles.quadrado}>{tabuleiro[index]}</Text>{" "}
         {/* Texto dentro do quadrado: X, O ou vazio */}
       </TouchableOpacity>
-    );
-  };
+    )
+  }
 
   // Efeito para verificar o vencedor do jogo e reiniciar a página após 4 segundos quando houver um vencedor
   useEffect(() => {
-    const ganhador = calcularVencedor(tabuleiro);
+    const ganhador = calcularVencedor(tabuleiro)
     if (ganhador) {
       // Definir o vencedor
-      setVencedor(ganhador);
+      setVencedor(ganhador)
       setTimeout(() => {
         // Reiniciar a página após 4 segundos
-        window.location.reload();
-      }, 4000);
+        window.location.reload()
+      }, 4000)
     } else if (tabuleiro.every((quadrado) => quadrado)) {
       // Verificar se todas as casas estão preenchidas (empate)
-      setVencedor("Empate");
+      setVencedor("Empate")
       setTimeout(() => {
-        window.location.reload();
-      }, 4000);
+        window.location.reload()
+      }, 4000)
     }
-  }, [tabuleiro]); // Executar sempre que o estado do tabuleiro mudar
+  }, [tabuleiro]) // Executar sempre que o estado do tabuleiro mudar
 
   // Determinar o status do jogo: próximo jogador ou vencedor
-  let status;
+  let status
   if (vencedor) {
-    status = "Vencedor: " + vencedor;
+    status = "Vencedor: " + vencedor
   } else {
-    status = "Próximo jogador: " + (vezDoX ? "X" : "O");
+    status = "Próximo jogador: " + (vezDoX ? "X" : "O")
   }
 
   // Renderizar o componente
@@ -75,7 +75,7 @@ export default function App() {
       {/* Exibir a barra de status do dispositivo */}
       <StatusBar style="auto" />
     </View>
-  );
+  )
 }
 
 // Estilos CSS para o componente
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   quadrado: {
     fontSize: 40,
   },
-});
+})
 
 // Função para calcular o vencedor do jogo
 function calcularVencedor(quadrados: Array<string | null>): string | null {
@@ -120,7 +120,7 @@ function calcularVencedor(quadrados: Array<string | null>): string | null {
     [2, 5, 8],
     [0, 4, 8],
     [2, 4, 6],
-  ];
+  ]
   // Verificar todas as possíveis combinações para ganhar o jogo
   for (let i = 0; i < linhas.length; i++) {
     const [a, b, c] = linhas[i];
@@ -129,8 +129,8 @@ function calcularVencedor(quadrados: Array<string | null>): string | null {
       quadrados[a] === quadrados[b] &&
       quadrados[a] === quadrados[c]
     ) {
-      return quadrados[a]; // Retornar o jogador que venceu
+      return quadrados[a] // Retornar o jogador que venceu
     }
   }
-  return null; // Retornar nulo se não houver vencedor
+  return null // Retornar nulo se não houver vencedor
 }
