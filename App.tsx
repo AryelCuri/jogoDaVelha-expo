@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
 export default function App() {
   // Estado para armazenar o estado atual do tabuleiro
@@ -16,7 +16,7 @@ export default function App() {
     // Verificar se já há um vencedor ou se o quadrado já foi preenchido
     if (vencedor || novoTabuleiro[index]) return;
     // Atualizar o estado do tabuleiro com a nova jogada
-    novoTabuleiro[index] = vezDoX ? 'X' : 'O';
+    novoTabuleiro[index] = vezDoX ? "X" : "O";
     setTabuleiro(novoTabuleiro);
     // Alternar a vez do jogador
     setVezDoX(!vezDoX);
@@ -30,7 +30,8 @@ export default function App() {
         style={styles.gridColumn}
         onPress={() => handleClique(index)} // Manipulador de clique para cada quadrado
       >
-        <Text style={styles.quadrado}>{tabuleiro[index]}</Text> {/* Texto dentro do quadrado: X, O ou vazio */}
+        <Text style={styles.quadrado}>{tabuleiro[index]}</Text>{" "}
+        {/* Texto dentro do quadrado: X, O ou vazio */}
       </TouchableOpacity>
     );
   };
@@ -47,7 +48,7 @@ export default function App() {
       }, 4000);
     } else if (tabuleiro.every((quadrado) => quadrado)) {
       // Verificar se todas as casas estão preenchidas (empate)
-      setVencedor('Empate');
+      setVencedor("Empate");
       setTimeout(() => {
         window.location.reload();
       }, 4000);
@@ -57,9 +58,9 @@ export default function App() {
   // Determinar o status do jogo: próximo jogador ou vencedor
   let status;
   if (vencedor) {
-    status = 'Vencedor: ' + vencedor;
+    status = "Vencedor: " + vencedor;
   } else {
-    status = 'Próximo jogador: ' + (vezDoX ? 'X' : 'O');
+    status = "Próximo jogador: " + (vezDoX ? "X" : "O");
   }
 
   // Renderizar o componente
@@ -81,27 +82,27 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
   status: {
     marginBottom: 10,
     fontSize: 20,
   },
   tabuleiro: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     width: 300,
     marginTop: 20,
   },
   gridColumn: {
-    width: '33.333%',
+    width: "33.333%",
     aspectRatio: 1,
     borderWidth: 1,
-    borderColor: '#000',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderColor: "#000",
+    alignItems: "center",
+    justifyContent: "center",
   },
   quadrado: {
     fontSize: 40,
