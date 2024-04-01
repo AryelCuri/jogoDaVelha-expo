@@ -45,6 +45,12 @@ export default function App() {
         // Reiniciar a página após 4 segundos
         window.location.reload();
       }, 4000);
+    } else if (tabuleiro.every((quadrado) => quadrado)) {
+      // Verificar se todas as casas estão preenchidas (empate)
+      setVencedor('Empate');
+      setTimeout(() => {
+        window.location.reload();
+      }, 4000);
     }
   }, [tabuleiro]); // Executar sempre que o estado do tabuleiro mudar
 
