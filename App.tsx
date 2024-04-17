@@ -1,66 +1,68 @@
 import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Button } from "react-native";
 
 export default function App() {
   // Estado para armazenar o estado atual do tabuleiro
-  const [tabuleiro, setTabuleiro] = useState(Array(9).fill(null))
+  const [tabuleiro, setTabuleiro] = useState(Array(9).fill(null));
   // Estado para controlar de quem é a vez: X ou O
-  const [vezDoX, setVezDoX] = useState(true)
+  const [vezDoX, setVezDoX] = useState(true);
   // Estado para armazenar o vencedor do jogo
-  const [vencedor, setVencedor] = useState<string | null>(null)
+  const [vencedor, setVencedor] = useState<string | null>(null);
+  // Estado para controlar a visibilidade do botão de reset
+  const [mostrarBotaoReset, setMostrarBotaoReset] = useState(false);
 
   // Função para lidar com o clique em um quadrado do tabuleiro
   const handleClique = (index: number) => {
-    const novoTabuleiro = [...tabuleiro]
+    const novoTabuleiro = [...tabuleiro];
     // Verificar se já há um vencedor ou se o quadrado já foi preenchido
-    if (vencedor || novoTabuleiro[index]) return
+    if (vencedor || novoTabuleiro[index]) return;
     // Atualizar o estado do tabuleiro com a nova jogada
-    novoTabuleiro[index] = vezDoX ? "X" : "O"
-    setTabuleiro(novoTabuleiro)
+    novoTabuleiro[index] = vezDoX ? "X" : "O";
+    setTabuleiro(novoTabuleiro);
     // Alternar a vez do jogador
-    setVezDoX(!vezDoX)
-  }
+    setVezDoX(!vezDoX);
+  };
 
   // Função para renderizar um quadrado do tabuleiro
   const renderizarQuadrado = (index: number) => {
     return (
       <TouchableOpacity
-        key={index} // Chave única para o TouchableOpacity
+        key={index}
         style={styles.gridColumn}
-        onPress={() => handleClique(index)} // Manipulador de clique para cada quadrado
+        onPress={() => handleClique(index)}
       >
         <Text style={styles.quadrado}>{tabuleiro[index]}</Text>{" "}
-        {/* Texto dentro do quadrado: X, O ou vazio */}
       </TouchableOpacity>
-    )
-  }
+    );
+  };
 
   // Efeito para verificar o vencedor do jogo e reiniciar a página após 4 segundos quando houver um vencedor
   useEffect(() => {
-    const ganhador = calcularVencedor(tabuleiro)
+    const ganhador = calcularVencedor(tabuleiro);
     if (ganhador) {
-      // Definir o vencedor
-      setVencedor(ganhador)
-      setTimeout(() => {
-        // Reiniciar a página após 4 segundos
-        window.location.reload()
-      }, 4000)
+      setVencedor(ganhador);
+      setMostrarBotaoReset(true); // Mostrar o botão de reset quando o jogo termina
     } else if (tabuleiro.every((quadrado) => quadrado)) {
-      // Verificar se todas as casas estão preenchidas (empate)
-      setVencedor("Empate")
-      setTimeout(() => {
-        window.location.reload()
-      }, 4000)
+      setVencedor("Empate");
+      setMostrarBotaoReset(true); // Mostrar o botão de reset quando o jogo termina
     }
-  }, [tabuleiro]) // Executar sempre que o estado do tabuleiro mudar
+  }, [tabuleiro]); // Executar sempre que o estado do tabuleiro mudar
+
+  // Função para reiniciar o jogo
+  const reiniciarJogo = () => {
+    setTabuleiro(Array(9).fill(null));
+    setVencedor(null);
+    setVezDoX(true);
+    setMostrarBotaoReset(false); // Esconder o botão de reset ao reiniciar o jogo
+  };
 
   // Determinar o status do jogo: próximo jogador ou vencedor
-  let status
+  let status;
   if (vencedor) {
-    status = "Vencedor: " + vencedor
+    status = vencedor === "Empate" ? "Empate!" : "Vencedor: " + vencedor;
   } else {
-    status = "Próximo jogador: " + (vezDoX ? "X" : "O")
+    status = "Próximo jogador: " + (vezDoX ? "X" : "O");
   }
 
   // Renderizar o componente
@@ -72,10 +74,11 @@ export default function App() {
       <View style={styles.tabuleiro}>
         {tabuleiro.map((_, index) => renderizarQuadrado(index))}
       </View>
-      {/* Exibir a barra de status do dispositivo */}
+      {/* Exibir o botão de reset condicionalmente */}
+      {mostrarBotaoReset && <Button title="Reiniciar Jogo" onPress={reiniciarJogo} />}
       <StatusBar style="auto" />
     </View>
-  )
+  );
 }
 
 // Estilos CSS para o componente
@@ -107,30 +110,29 @@ const styles = StyleSheet.create({
   quadrado: {
     fontSize: 40,
   },
-})
+});
 
-// Função para calcular o vencedor do jogo
-function calcularVencedor(quadrados: Array<string | null>): string | null {
-  const linhas = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ]
-  // Verificar todas as possíveis combinações para ganhar o jogo
-  for (let i = 0; i < linhas.length; i++) {
-    const [a, b, c] = linhas[i];
-    if (
-      quadrados[a] &&
-      quadrados[a] === quadrados[b] &&
-      quadrados[a] === quadrados[c]
-    ) {
-      return quadrados[a] // Retornar o jogador que venceu
+  // Função para calcular o vencedor do jogo
+  function calcularVencedor(quadrados: Array<string | null>): string | null {
+    const linhas = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+    for (let i = 0; i < linhas.length; i++) {
+      const [a, b, c] = linhas[i];
+      if (
+        quadrados[a] &&
+        quadrados[a] === quadrados[b] &&
+        quadrados[a] === quadrados[c]
+      ) {
+        return quadrados[a];
+      }
     }
+    return null;
   }
-  return null // Retornar nulo se não houver vencedor
-}
